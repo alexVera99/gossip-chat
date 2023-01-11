@@ -97,6 +97,9 @@ function sendMessage() {
     // Clear the input
     user_input.value = "";
 
+    // Scroll to bottom of the chat
+    scrollBottom(chat);
+
 }
 
 function createReceivedMessage(username, text) {
@@ -135,6 +138,8 @@ function receiveMessage() {
 
     chat.appendChild(message_container);
 
+    // Scroll to bottom of the chat
+    scrollBottom(chat);
 }
 
 // Call the receiveMessage() function to simulate receiving messages
