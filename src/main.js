@@ -1,6 +1,8 @@
 var btn = document.querySelector(".chat-message-btn");
 btn.addEventListener("click", sendMessage);
 
+var input = document.querySelector("#message-id");
+input.addEventListener("keydown", onKeyDown);
 class MessageUsername extends HTMLDivElement {
     constructor() {
         var self = super();
@@ -95,4 +97,19 @@ function sendMessage() {
     // Clear the input
     user_input.value = "";
 
+}
+
+function isCtrlOrCmdPressed(event) {
+    var isPressed =  event.ctrlKey || // Windows Control
+           event.keyCode == 224 || // Mac Command Key in Firefox
+           event.keyCode == 91 || // Mac left Command Key in Safari/Chrome
+           event.keyCode == 93; // Mac Right Command Key in Safari/Chrome
+
+    return isPressed;
+}
+
+function onKeyDown( event ) {
+    if (event.code == "Enter" && isCtrlOrCmdPressed(event)) {
+        sendMessage();
+    }
 }
