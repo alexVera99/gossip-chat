@@ -49,23 +49,23 @@ class BaseMessage extends HTMLDivElement {
     }
 }
 
-customElements.define("message-user-name", 
-                       MessageUsername, 
+customElements.define("message-user-name",
+                       MessageUsername,
                        {extends: "div"});
 
-customElements.define("message-user-content", 
-                       MessageContent, 
+customElements.define("message-user-content",
+                       MessageContent,
                        {extends: "div"});
 
-customElements.define("message-user", 
-                       BaseMessage, 
+customElements.define("message-user",
+                       BaseMessage,
                        {extends: "div"});
 
 
 function createMessage(username, text) {
     var message = document.createElement("div",
                                         {is: "message-user"})
-                                
+
     message.setAttribute('class', 'message-user')
     message.addMessageInfo(username, text);
 
@@ -76,12 +76,12 @@ function createMessage(username, text) {
 function sendMessage() {
     // Get the message information from user input
     var user_input = document.querySelector("#message-id");
-    
+
     var username = "alexitu"; // HARDCODED!!!!!!!!!
     var message = user_input.value;
 
     // Create the message container with the data
-    message_container = createMessage(username, message);
+    var message_container = createMessage(username, message);
 
     // Put the message container in the chat history container
     var chat = document.querySelector(".chat-history-container");
@@ -90,5 +90,5 @@ function sendMessage() {
 
     // Clear the input
     user_input.value = "";
-    
+
 }
