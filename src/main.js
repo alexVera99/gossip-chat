@@ -99,6 +99,51 @@ function sendMessage() {
 
 }
 
+function createReceivedMessage(username, text) {
+    var message = document.createElement("div",
+    {is: "message-user"})
+
+    message.setAttribute('class', 'message-other-users')
+    message.addMessageInfo(username, text);
+
+    return message;
+}
+
+function receiveMessage() {
+    // Toy function!!!
+
+    // Generate random message
+    const usernames = ["Pepe", "Maria", "Luis", "Pacoo23"];
+    const messages = ["Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi optio voluptates unde magni voluptatem illum, \
+                       enim porro iure quas fugiat eos cum iusto quidem labore tempore quos quasi! Repellendus, laborum!",
+                      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti laborum accusamus est ullam sed corporis \
+                      magni necessitatibus ut, illo labore architecto iste voluptas molestiae, eos id? Tenetur neque dolorum recusandae.",
+                      "Fantástico!!",
+                      "JAJAJAJAJ!!!",
+                      "❤️❤️❤️❤️❤️❤️❤️",
+                      "😂😂😂😂😂"];
+    var u = Math.floor(Math.random()*usernames.length);
+    var m = Math.floor(Math.random()*messages.length);
+    var username = usernames[u];
+    var message = messages[m];
+
+    // Create message container
+    var message_container = createReceivedMessage(username, message);
+
+    // Put the message container in the chat history container
+    var chat = document.querySelector(".chat-history-container");
+
+    chat.appendChild(message_container);
+
+}
+
+// Call the receiveMessage() function to simulate receiving messages
+const max = 6000; // Max time to receive a new message
+const min = 2000; // Min time to receive a new message
+setInterval(receiveMessage, Math.random() * (max - min) + min);
+// FINISH SIMULATION CODE
+// TODO: Remove this piece of code
+
 function isCtrlOrCmdPressed(event) {
     var isPressed =  event.ctrlKey || // Windows Control
            event.keyCode == 224 || // Mac Command Key in Firefox
