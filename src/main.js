@@ -78,7 +78,11 @@ function sendMessage() {
     var user_input = document.querySelector("#message-id");
 
     var username = "alexitu"; // HARDCODED!!!!!!!!!
-    var message = user_input.value;
+    var message = user_input.value.trim();
+
+    if (!message) {
+        return;
+    }
 
     // Create the message container with the data
     var message_container = createMessage(username, message);
