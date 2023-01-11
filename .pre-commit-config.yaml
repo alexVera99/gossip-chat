@@ -25,4 +25,3 @@ repos:
     rev: 'v8.31.0'
     hooks:
     -   id: eslint
-        files: ./src/*.js
