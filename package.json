@@ -1,0 +1,22 @@
+{
+  "name": "gossip-room",
+  "version": "1.0.0",
+  "description": "Chat room",
+  "main": "src/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexVera99/ecv-chat.git"
+  },
+  "author": "Alexander Vera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexVera99/ecv-chat/issues"
+  },
+  "homepage": "https://github.com/alexVera99/ecv-chat#readme",
+  "devDependencies": {
+    "eslint": "^8.31.0"
+  }
+}
