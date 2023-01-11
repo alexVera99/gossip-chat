@@ -3,9 +3,10 @@
     margin: 0;
     box-sizing: border-box;
 }
-
 html, body {
     height: 100%;
+    font-family: Montserrat;
+    color: white;
 }
 
 /* Main container */
@@ -16,20 +17,117 @@ html, body {
     grid-template-areas: 'header'
     'history'
     'message';
-    grid-template-rows: 20% 70% 10%;
+    grid-template-rows: min-content auto min-content;
 }
 
 /* Chat header */
 .chat-header-container {
     grid-area: header;
+    display: grid;
+    grid-template-columns: auto minmax(min-content, 15%);
+    padding: 0.5em;
+    background-color: #587e88;
+}
+
+.chat-name {
+    display: grid;
+    align-items: center;
+}
+
+.chat-name > h1 {
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+.chat-user {
+    display: grid;
+    align-items: center;
+    justify-content: right;
+}
+
+.chat-user > h2 {
+    font-size: 1em;
+    font-weight: 100;
 }
 
 /* Chat history */
 .chat-history-container {
     grid-area: history;
+    display: block;
+    background-color: #355c66;
+    height: 100%;
+    overflow: auto;
+}
+
+.message-user {
+    background-color: #5d5888;
+    width: fit-content;
+    margin: 0.5em 1% 1em 30%;
+    padding: 1%;
+    border-radius: 15px;
+}
+
+.message-other-users {
+    background-color: #588862;
+    width: fit-content;
+    margin: 0.5em 30% 1em 1%;
+    padding: 1%;
+    border-radius: 15px;
+}
+
+.message-user-name {
+    font-weight: 100;
+    font-size: 0.7em;
+    margin-bottom: 0.9em;
+}
+
+.message-user-content {
+    font-size: 0.9em;
 }
 
 /* Chat input */
 .chat-input-message-container {
     grid-area: message;
+    display: grid;
+    grid-template-columns: auto min-content;
+    background-color: #587e88;
+    padding: 0.5em 1em;
+}
+
+.chat-message-input {
+    background-color: inherit;
+    border: none;
+    height: 2.5em;
+    overflow: auto;
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: 500;
+    resize: none;
+    color: white;
+}
+
+.chat-message-input:focus {
+    outline: none;
+}
+
+.chat-message-btn {
+    background-color: inherit;
+    border: none;
+    color: white;
+    border-radius: 20px;
+    height: 3em;
+    width: 3em;
+}
+
+.chat-message-btn:active {
+    background-color: white;
+    color: black;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 300,
+  'GRAD' 0,
+  'opsz' 48
 }
