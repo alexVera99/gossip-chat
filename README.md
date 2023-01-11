@@ -7,3 +7,13 @@ Virtual Communication Environments at Universitat Pompeu Fabra (UPF).
 
 The logo has been downloaded from [Pixabay](https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=347229)
 and created by [Anna](https://pixabay.com/users/kropekk_pl-114936/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=347229).
+
+## Pre-commit
+
+To run pre-commit please install it:
+``pip install pre-commit``
+
+Also, install eslint:
+``npm init @eslint/config``
+
+Now, at each commit, pre-commit will be executed to analyze the code.
