@@ -29,7 +29,16 @@ class MessageContent extends HTMLDivElement {
     }
 }
 
-
+/* Template of the message container
+<div is="message-user" class="message-user||message-other-users">
+    <div is="message-user-name" class="message-user-name">
+        <p>Username</p>
+    </div>
+    <div is="message-user-content" class="message-user-content">
+        <p>My super beautiful message :)</p>
+    </div>
+</div>
+*/
 class BaseMessage extends HTMLDivElement {
     constructor() {
         var self = super();
