@@ -80,7 +80,14 @@ function createMessage(username, text) {
     message.setAttribute('class', 'message-user')
     message.addMessageInfo(username, text);
 
-    return message;
+    // Wrap with div the message tag
+    // Necessary for placing message to the right
+    // IMPROVE THIS!!!!!!!!!!!!!! PLEASE!!!!!!!!
+    var div = document.createElement("div");
+    div.setAttribute('class', 'message-user-container');
+    div.appendChild(message);
+
+    return div;
 }
 
 
