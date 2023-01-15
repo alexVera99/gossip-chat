@@ -29,16 +29,15 @@ class MessageContent extends HTMLDivElement {
     }
 }
 
-/* Template of the message container
-<div is="message-user" class="message-user||message-other-users">
-    <div is="message-user-name" class="message-user-name">
-        <p>Username</p>
-    </div>
-    <div is="message-user-content" class="message-user-content">
-        <p>My super beautiful message :)</p>
-    </div>
-</div>
-*/
+class MessageType {
+    static User = new MessageType("user");
+    static OtherUser = new MessageType("otheruser");
+
+    constructor(name) {
+        this.name = name;
+    }
+}
+
 class BaseMessage extends HTMLDivElement {
     constructor() {
         var self = super();
@@ -58,6 +57,46 @@ class BaseMessage extends HTMLDivElement {
         this.querySelector(".message-user-name").addText(username);
         this.querySelector(".message-user-content").addText(text);
     }
+
+    addTypeOfMessage(type) {
+        if (type === MessageType.User){
+            this.setAttribute("class", "message-user");
+        }
+        else if (type == MessageType.OtherUser) {
+            this.setAttribute("class", "message-other-users");
+        }
+    }
+}
+
+/* Template of the message container
+<div class="message-user-container">
+    <div class="message-user">
+        <div class="message-user-name">
+            <p>Username</p>
+        </div>
+        <div class="message-user-content">
+            <p>My super beautiful message :)</p>
+        </div>
+    </div>
+</div>
+*/
+class UserMessageContainer extends HTMLDivElement {
+    constructor() {
+        var self = super();
+
+        self.setAttribute("class", "message-user-container");
+
+        var baseMessage = document.createElement("div",
+                                                 {is: "message-user"});
+
+        baseMessage.addTypeOfMessage(MessageType.User);
+
+        self.appendChild(baseMessage);
+    }
+
+    addMessageInfo = function (username, text) {
+        this.children[0].addMessageInfo(username, text);
+    }
 }
 
 customElements.define("message-user-name",
@@ -72,22 +111,17 @@ customElements.define("message-user",
                        BaseMessage,
                        {extends: "div"});
 
+customElements.define("message-user-container",
+                      UserMessageContainer,
+                      {extends: "div"});
 
 function createMessage(username, text) {
-    var message = document.createElement("div",
-                                        {is: "message-user"})
+    var messageContainer = document.createElement("div",
+                                                  {is: "message-user-container"})
 
-    message.setAttribute('class', 'message-user')
-    message.addMessageInfo(username, text);
+    messageContainer.addMessageInfo(username, text);
 
-    // Wrap with div the message tag
-    // Necessary for placing message to the right
-    // IMPROVE THIS!!!!!!!!!!!!!! PLEASE!!!!!!!!
-    var div = document.createElement("div");
-    div.setAttribute('class', 'message-user-container');
-    div.appendChild(message);
-
-    return div;
+    return messageContainer;
 }
 
 
