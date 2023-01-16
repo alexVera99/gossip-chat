@@ -69,8 +69,8 @@ class BaseMessage extends HTMLDivElement {
 }
 
 /* Template of the message container
-<div class="message-user-container">
-    <div class="message-user">
+<div class="message-user-container|message-other-users-container">
+    <div class="message-user|message-other-users">
         <div class="message-user-name">
             <p>Username</p>
         </div>
@@ -84,18 +84,28 @@ class UserMessageContainer extends HTMLDivElement {
     constructor() {
         var self = super();
 
-        self.setAttribute("class", "message-user-container");
-
         var baseMessage = document.createElement("div",
-                                                 {is: "message-user"});
-
-        baseMessage.addTypeOfMessage(MessageType.User);
+                                                 {is: "base-message"});
 
         self.appendChild(baseMessage);
     }
 
     addMessageInfo = function (username, text) {
         this.children[0].addMessageInfo(username, text);
+    }
+
+    addTypeOfMessage(type) {
+        // Set base message type
+        this.children[0].addTypeOfMessage(type);
+
+        if (type === MessageType.User) {
+            // Set container type
+            this.setAttribute("class", "message-user-container");
+        }
+        else if (type === MessageType.OtherUser) {
+            // Set container type
+            this.setAttribute("class", "message-other-users-container");
+        }
     }
 }
 
@@ -107,7 +117,7 @@ customElements.define("message-user-content",
                        MessageContent,
                        {extends: "div"});
 
-customElements.define("message-user",
+customElements.define("base-message",
                        BaseMessage,
                        {extends: "div"});
 
@@ -119,6 +129,7 @@ function createMessage(username, text) {
     var messageContainer = document.createElement("div",
                                                   {is: "message-user-container"})
 
+    messageContainer.addTypeOfMessage(MessageType.User);
     messageContainer.addMessageInfo(username, text);
 
     return messageContainer;
@@ -153,13 +164,13 @@ function sendMessage() {
 }
 
 function createReceivedMessage(username, text) {
-    var message = document.createElement("div",
-    {is: "message-user"})
+    var messageContainer = document.createElement("div",
+                                                  {is: "message-user-container"})
 
-    message.setAttribute('class', 'message-other-users')
-    message.addMessageInfo(username, text);
+    messageContainer.addTypeOfMessage(MessageType.OtherUser);
+    messageContainer.addMessageInfo(username, text);
 
-    return message;
+    return messageContainer;
 }
 
 function receiveMessage() {
