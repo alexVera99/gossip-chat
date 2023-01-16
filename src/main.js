@@ -3,136 +3,15 @@ btn.addEventListener("click", sendMessage);
 
 var input = document.querySelector("#message-id");
 input.addEventListener("keydown", onKeyDown);
-class MessageUsername extends HTMLDivElement {
-    constructor() {
-        var self = super();
-        self.setAttribute('class', 'message-user-name');
-    }
-
-    addText = function (username) {
-        var p = document.createElement('p');
-        p.textContent = username;
-        this.appendChild(p);
-    }
-}
-
-class MessageContent extends HTMLDivElement {
-    constructor() {
-        var self = super();
-        self.setAttribute('class', 'message-user-content');
-    }
-
-    addText = function (content) {
-        var p = document.createElement('p');
-        p.textContent = content;
-        this.appendChild(p);
-    }
-}
-
-class MessageType {
-    static User = new MessageType("user");
-    static OtherUser = new MessageType("otheruser");
-
-    constructor(name) {
-        this.name = name;
-    }
-}
-
-class BaseMessage extends HTMLDivElement {
-    constructor() {
-        var self = super();
-
-        var message_username_container = document.createElement("div",
-                                                            {is: "message-user-name"})
-        var message_content_container = document.createElement('div',
-                                                                {is: "message-user-content"});
-        //message_content_container.addText(text);
-
-        self.appendChild(message_username_container);
-        self.appendChild(message_content_container);
-
-    }
-
-    addMessageInfo = function (username, text) {
-        this.querySelector(".message-user-name").addText(username);
-        this.querySelector(".message-user-content").addText(text);
-    }
-
-    addTypeOfMessage(type) {
-        if (type === MessageType.User){
-            this.setAttribute("class", "message-user");
-        }
-        else if (type == MessageType.OtherUser) {
-            this.setAttribute("class", "message-other-users");
-        }
-    }
-}
-
-/* Template of the message container
-<div class="message-user-container|message-other-users-container">
-    <div class="message-user|message-other-users">
-        <div class="message-user-name">
-            <p>Username</p>
-        </div>
-        <div class="message-user-content">
-            <p>My super beautiful message :)</p>
-        </div>
-    </div>
-</div>
-*/
-class UserMessageContainer extends HTMLDivElement {
-    constructor() {
-        var self = super();
-
-        var baseMessage = document.createElement("div",
-                                                 {is: "base-message"});
-
-        self.appendChild(baseMessage);
-    }
-
-    addMessageInfo = function (username, text) {
-        this.children[0].addMessageInfo(username, text);
-    }
-
-    addTypeOfMessage(type) {
-        // Set base message type
-        this.children[0].addTypeOfMessage(type);
-
-        if (type === MessageType.User) {
-            // Set container type
-            this.setAttribute("class", "message-user-container");
-        }
-        else if (type === MessageType.OtherUser) {
-            // Set container type
-            this.setAttribute("class", "message-other-users-container");
-        }
-    }
-}
-
-customElements.define("message-user-name",
-                       MessageUsername,
-                       {extends: "div"});
-
-customElements.define("message-user-content",
-                       MessageContent,
-                       {extends: "div"});
-
-customElements.define("base-message",
-                       BaseMessage,
-                       {extends: "div"});
-
-customElements.define("message-user-container",
-                      UserMessageContainer,
-                      {extends: "div"});
 
 function createMessage(username, text) {
-    var messageContainer = document.createElement("div",
-                                                  {is: "message-user-container"})
+    var template = document.querySelector("#templates .message-user-container");
+    var message = template.cloneNode(true);
 
-    messageContainer.addTypeOfMessage(MessageType.User);
-    messageContainer.addMessageInfo(username, text);
+    message.querySelector(".message-user-name").innerText = username;
+    message.querySelector(".message-user-content").innerText = text;
 
-    return messageContainer;
+    return message;
 }
 
 
@@ -164,13 +43,13 @@ function sendMessage() {
 }
 
 function createReceivedMessage(username, text) {
-    var messageContainer = document.createElement("div",
-                                                  {is: "message-user-container"})
+    var template = document.querySelector("#templates .message-other-users-container");
+    var message = template.cloneNode(true);
 
-    messageContainer.addTypeOfMessage(MessageType.OtherUser);
-    messageContainer.addMessageInfo(username, text);
+    message.querySelector(".message-user-name").innerText = username;
+    message.querySelector(".message-user-content").innerText = text;
 
-    return messageContainer;
+    return message;
 }
 
 function receiveMessage() {
