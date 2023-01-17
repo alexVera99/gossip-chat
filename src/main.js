@@ -1,58 +1,69 @@
 var btn = document.querySelector(".chat-message-btn");
-btn.addEventListener("click", sendMessage);
+btn.addEventListener("click", onUserSendMessage);
 
 var input = document.querySelector("#message-id");
 input.addEventListener("keydown", onKeyDown);
 
-function createMessage(username, text) {
-    var template = document.querySelector("#templates .message-user-container");
-    var message = template.cloneNode(true);
-
-    message.querySelector(".message-user-name").innerText = username;
-    message.querySelector(".message-user-content").innerText = text;
-
-    return message;
-}
-
-
-function sendMessage() {
+function getUserInput() {
     // Get the message information from user input
     var user_input = document.querySelector("#message-id");
 
     var username = "alexitu"; // HARDCODED!!!!!!!!!
-    var message = user_input.value.trim();
+    var text = user_input.value.trim();
 
-    if (!message) {
+    if (!text) {
         return;
     }
-
-    // Create the message container with the data
-    var message_container = createMessage(username, message);
-
-    // Put the message container in the chat history container
-    var chat = document.querySelector(".chat-history-container");
-
-    chat.appendChild(message_container);
 
     // Clear the input
     user_input.value = "";
 
-    // Scroll to bottom of the chat
-    scrollBottom(chat);
-
+    return {
+        "username": username,
+        "text": text
+    };
 }
 
-function createReceivedMessage(username, text) {
-    var template = document.querySelector("#templates .message-other-users-container");
+function showMessage(username, text, messageType) {
+    var messageClass = messageType == "user" ? ".message-user-container" : ".message-other-users-container";
+
+    var template = document.querySelector("#templates " + messageClass);
     var message = template.cloneNode(true);
 
     message.querySelector(".message-user-name").innerText = username;
     message.querySelector(".message-user-content").innerText = text;
 
-    return message;
+    // Put the message container in the chat history container
+    var chat = document.querySelector(".chat-history-container");
+
+    chat.appendChild(message);
+
+    // Scroll to bottom of the chat
+    scrollBottom(chat);
 }
 
-function receiveMessage() {
+function sendMessageToServer(username, text) {
+    // TO DO: Logic to send the message over the Intenet
+    console.log(`Sending message with username: ${username} and text:\n
+                ${text}`);
+}
+
+function onUserSendMessage() {
+    var messageData = getUserInput();
+
+    var username = messageData["username"];
+    var text = messageData["text"];
+
+    showMessage(username, text, "user");
+
+    sendMessageToServer(username, text);
+}
+
+function receiveMessageFromServer() {
+    // TO DO: Logic to receive the message from the Internet
+}
+
+function receiveMessageFromServerSimulator() {
     // Toy function!!!
 
     // Generate random message
@@ -68,24 +79,28 @@ function receiveMessage() {
     var u = Math.floor(Math.random()*usernames.length);
     var m = Math.floor(Math.random()*messages.length);
     var username = usernames[u];
-    var message = messages[m];
+    var text = messages[m];
 
-    // Create message container
-    var message_container = createReceivedMessage(username, message);
+    return {
+        "username": username,
+        "text": text
+    };
+}
 
-    // Put the message container in the chat history container
-    var chat = document.querySelector(".chat-history-container");
+function onServerSendsMessage() {
+    //var messageData = receiveMessageFromServer();
+    var messageData = receiveMessageFromServerSimulator();
 
-    chat.appendChild(message_container);
+    var username = messageData["username"];
+    var text = messageData["text"];
 
-    // Scroll to bottom of the chat
-    scrollBottom(chat);
+    showMessage(username, text, "other");
 }
 
 // Call the receiveMessage() function to simulate receiving messages
 const max = 6000; // Max time to receive a new message
 const min = 2000; // Min time to receive a new message
-setInterval(receiveMessage, Math.random() * (max - min) + min);
+setInterval(onServerSendsMessage, Math.random() * (max - min) + min);
 // FINISH SIMULATION CODE
 // TODO: Remove this piece of code
 
@@ -100,6 +115,6 @@ function isCtrlOrCmdPressed(event) {
 
 function onKeyDown( event ) {
     if (event.code == "Enter" && isCtrlOrCmdPressed(event)) {
-        sendMessage();
+        onUserSendMessage();
     }
 }
