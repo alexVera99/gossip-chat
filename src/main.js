@@ -106,9 +106,7 @@ setInterval(onServerSendsMessage, Math.random() * (max - min) + min);
 
 function isCtrlOrCmdPressed(event) {
     var isPressed =  event.ctrlKey || // Windows Control
-           event.keyCode == 224 || // Mac Command Key in Firefox
-           event.keyCode == 91 || // Mac left Command Key in Safari/Chrome
-           event.keyCode == 93; // Mac Right Command Key in Safari/Chrome
+           event.metaKey; // Mac Command Key in Firefox
 
     return isPressed;
 }
