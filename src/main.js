@@ -1,3 +1,6 @@
+var user_id;
+var base_room = "ALEXANDER_VERA_ROOM_"
+
 var btn = document.querySelector(".chat-message-btn");
 btn.addEventListener("click", onUserSendMessage);
 
@@ -5,20 +8,24 @@ var input = document.querySelector("#message-id");
 input.addEventListener("keydown", onKeyDown);
 
 var server = new SillyClient();
-server.connect( "wss://ecv-etic.upf.edu/node/9000/ws", "ALEXANDER_ROOM_1234");
+server.connect( "wss://ecv-etic.upf.edu/node/9000/ws", base_room + "1234");
 server.on_ready = function( my_id )
 {
-    console.log(my_id);
+    user_id = my_id;
+    showUserId(my_id);
 }
 server.on_message = function( author_id, msg ){
     showMessage(author_id, msg, "other");
+}
+
+function showUserId(my_id) {
+    document.querySelector(".chat-header-container > .chat-user").innerText = "User id: " + my_id;
 }
 
 function getUserInput() {
     // Get the message information from user input
     var user_input = document.querySelector("#message-id");
 
-    var username = "alexitu"; // HARDCODED!!!!!!!!!
     var text = user_input.value.trim();
 
     if (!text) {
@@ -28,10 +35,7 @@ function getUserInput() {
     // Clear the input
     user_input.value = "";
 
-    return {
-        "username": username,
-        "text": text
-    };
+    return text;
 }
 
 function showMessage(username, text, messageType) {
@@ -57,16 +61,13 @@ function sendMessageToServer(text) {
 }
 
 function onUserSendMessage() {
-    var messageData = getUserInput();
+    var text = getUserInput();
 
-    if (messageData == null){
+    if (text == null){
         return;
     }
 
-    var username = messageData["username"];
-    var text = messageData["text"];
-
-    showMessage(username, text, "user");
+    showMessage(user_id, text, "user");
 
     sendMessageToServer(text);
 }
