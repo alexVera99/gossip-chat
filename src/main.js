@@ -12,7 +12,7 @@ function getUserInput() {
     var text = user_input.value.trim();
 
     if (!text) {
-        return;
+        return null;
     }
 
     // Clear the input
@@ -50,6 +50,10 @@ function sendMessageToServer(username, text) {
 
 function onUserSendMessage() {
     var messageData = getUserInput();
+
+    if (messageData == null){
+        return;
+    }
 
     var username = messageData["username"];
     var text = messageData["text"];
