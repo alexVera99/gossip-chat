@@ -18,5 +18,8 @@
   "homepage": "https://github.com/alexVera99/ecv-chat#readme",
   "devDependencies": {
     "eslint": "^8.31.0"
+  },
+  "dependencies": {
+    "sillyserver": "^1.2.10"
   }
 }
