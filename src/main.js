@@ -23,15 +23,17 @@ var MYCHAT = {
         MYCHAT.server = new SillyClient();
         MYCHAT.server.connect( MYCHAT.server_url, MYCHAT.base_room + "1234");
 
-        MYCHAT.server.on_ready = function( my_id )
-        {
-            MYCHAT.user_id = my_id;
-            MYCHAT.showUserId(my_id);
-        }
+        MYCHAT.server.on_ready = MYCHAT.onReadyServer;
+        MYCHAT.server.on_message = MYCHAT.onMessageServer;
+    },
 
-        MYCHAT.server.on_message = function( author_id, msg ){
-            MYCHAT.showMessage(author_id, msg, "other");
-        }
+    onReadyServer: function (my_id) {
+        MYCHAT.user_id = my_id;
+        MYCHAT.showUserId(my_id);
+    },
+
+    onMessageServer: function( author_id, msg ){
+        MYCHAT.showMessage(author_id, msg, "other");
     },
 
     showUserId: function (my_id) {
