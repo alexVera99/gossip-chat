@@ -3,6 +3,7 @@ var MYCHAT = {
     base_room: "ALEXANDER_VERA_ROOM_",
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
+    base_css_class: ".my-chat",
 
     init: function() {
         MYCHAT.setUpListeners();
@@ -11,10 +12,10 @@ var MYCHAT = {
     },
 
     setUpListeners: function () {
-        let btn = document.querySelector(".chat-message-btn");
+        let btn = document.querySelector(MYCHAT.base_css_class + " .chat-message-btn");
         btn.addEventListener("click", MYCHAT.onUserSendMessage);
 
-        var input = document.querySelector("#message-id");
+        var input = document.querySelector(MYCHAT.base_css_class + " #message-id");
         input.addEventListener("keydown", MYCHAT.onKeyDown);
     },
 
@@ -34,12 +35,13 @@ var MYCHAT = {
     },
 
     showUserId: function (my_id) {
-        document.querySelector(".chat-header-container > .chat-user").innerText = "User id: " + my_id;
+        var userIdContainer= document.querySelector(MYCHAT.base_css_class + " .chat-header-container > .chat-user");
+        userIdContainer.innerText = "User id: " + my_id;
     },
 
     getUserInput: function () {
         // Get the message information from user input
-        var user_input = document.querySelector("#message-id");
+        var user_input = document.querySelector(MYCHAT.base_css_class + " #message-id");
 
         var text = user_input.value.trim();
 
@@ -54,16 +56,18 @@ var MYCHAT = {
     },
 
     showMessage: function (username, text, messageType) {
-        var messageClass = messageType == "user" ? ".message-user-container" : ".message-other-users-container";
+        var messageClass = messageType == "user" ?
+                           ".message-user-container" :
+                           ".message-other-users-container";
 
-        var template = document.querySelector("#templates " + messageClass);
+        var template = document.querySelector(MYCHAT.base_css_class + " #templates " + messageClass);
         var message = template.cloneNode(true);
 
         message.querySelector(".message-user-name").innerText = username;
         message.querySelector(".message-user-content").innerText = text;
 
         // Put the message container in the chat history container
-        var chat = document.querySelector(".chat-history-container");
+        var chat = document.querySelector(MYCHAT.base_css_class + " .chat-history-container");
 
         chat.appendChild(message);
 
