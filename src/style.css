@@ -79,6 +79,8 @@ html, body {
 .my-chat .message-user {
     background-color: #5d5888;
     width: fit-content;
+    max-width: 95%;
+    overflow-wrap: break-word;
     margin: 0.5em 1% 1em 30%;
     padding: 1%;
     border-radius: 15px;
@@ -87,6 +89,8 @@ html, body {
 .my-chat .message-other-users {
     background-color: #588862;
     width: fit-content;
+    max-width: 95%;
+    overflow-wrap: break-word;
     margin: 0.5em 30% 1em 1%;
     padding: 1%;
     border-radius: 15px;
