@@ -24,13 +24,18 @@ html, body {
 .my-chat .chat-header-container {
     grid-area: header;
     display: grid;
-    grid-template-columns: 5% auto minmax(min-content, 15%);
+    grid-template-columns: 2.9em auto minmax(min-content, 15%);
     padding: 0.5em;
     background-color: #587e88;
 }
 
+.my-chat .brand {
+    display: flex;
+}
+
 .my-chat .brand > img {
     width: 100%;
+    margin: auto;
 }
 
 .my-chat .chat-name {
