@@ -87,7 +87,18 @@ var MYCHAT = {
     },
 
     onMessageServer: function( author_id, msg ){
-        MYCHAT.showMessage(author_id, msg, "other");
+        msg = JSON.parse(msg);
+        MYCHAT.showMessage(msg["username"], msg["content"], "other");
+    },
+
+    sendMessageToServer: function (text) {
+        let msg = {
+            type: "text",
+            username: MYCHAT.username,
+            content: text
+        };
+
+        MYCHAT.server.sendMessage(msg);
     },
 
     getUserInput: function () {
@@ -124,10 +135,6 @@ var MYCHAT = {
 
         // Scroll to bottom of the chat
         MYCHAT.scrollToBottom(chat);
-    },
-
-    sendMessageToServer: function (text) {
-        MYCHAT.server.sendMessage(text);
     },
 
     onUserSendMessage: function () {
