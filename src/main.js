@@ -61,12 +61,17 @@ var MYCHAT = {
         MYCHAT.chat_container_elem.querySelector(":scope > .pop-up-container").remove();
     },
 
+    enableSendMessageBtn: function () {
+        MYCHAT.chat_container_elem.querySelector(".chat-message-input").disabled = false;
+    },
+
     setUpChat: function() {
         MYCHAT.removeWelcomePopUp();
         MYCHAT.showUsername();
         MYCHAT.showRoom();
         MYCHAT.setUpServer();
         MYCHAT.setUpListeners();
+        MYCHAT.enableSendMessageBtn();
     },
 
     setUpServer: function () {

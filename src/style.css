@@ -150,5 +150,52 @@ html, body {
 }
 
 .my-chat .pop-up-container {
-    background-color: #355c66;
+    background-color: #202a2d;
+    position: absolute;
+    align-self: center;
+    justify-self: center;
+    width: 20ch;
+    height: 50%;
+    border-radius: 15px;
+    display: grid;
+    grid-template-areas: 'input'
+    'input'
+    'input'
+    'btn';
+}
+
+.my-chat .pop-up-container > .input-container {
+    text-align: center;
+    margin: auto;
+    grid-area: input;
+}
+
+.my-chat .pop-up-container > .input-container > p {
+    margin-bottom: 5%;
+}
+
+.my-chat .pop-up-container > .input-container > input#username-input {
+    margin-bottom: 10%;
+}
+
+.my-chat .pop-up-container > .input-container > input {
+    font-family: inherit;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container {
+    grid-area: btn;
+    text-align: center;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container > #pop-up-btn {
+    font-family: inherit;
+    width: 10ch;
+    height: 4ch;
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container > #pop-up-btn:active {
+    background-color: #587e88;
 }
