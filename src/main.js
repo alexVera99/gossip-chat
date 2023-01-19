@@ -1,14 +1,42 @@
 var MYCHAT = {
     user_id: "",
-    base_room: "ALEXANDER_VERA_ROOM_",
+    username: "",
+    base_room: "GossipChat_",
+    room: "",
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
     chat_container_elem: document.querySelector(".my-chat.main-container"),
 
     init: function() {
-        MYCHAT.setUpListeners();
+        // Show pop up
+        let template = MYCHAT.chat_container_elem.querySelector("#templates .pop-up-container");
+        let pop_up_container = template.cloneNode(true);
 
-        MYCHAT.setUpServer();
+        MYCHAT.chat_container_elem.appendChild(pop_up_container);
+
+        // Pop-up listeners
+        var usernameAndRoomBtn = pop_up_container.querySelector("#pop-up-btn");
+        usernameAndRoomBtn.addEventListener("click", MYCHAT.onUsernameAndRoomBtn);
+    },
+
+    onUsernameAndRoomBtn: function () {
+        // Read input
+        MYCHAT.username = MYCHAT.chat_container_elem.querySelector(":scope > .pop-up-container #username-input").value.trim();
+        MYCHAT.room = MYCHAT.chat_container_elem.querySelector(":scope > .pop-up-container #room-input").value.trim();
+
+        if (!MYCHAT.username) {
+            alert("Please, provide a Username");
+            return;
+        }
+        else if (!MYCHAT.room) {
+            alert("Please, provide a Room");
+            return;
+        }
+
+        MYCHAT.room = MYCHAT.base_room + MYCHAT.room;
+
+        // Set up the chat
+        MYCHAT.setUpChat();
     },
 
     setUpListeners: function () {
@@ -19,9 +47,31 @@ var MYCHAT = {
         input.addEventListener("keydown", MYCHAT.onKeyDown);
     },
 
+    showUsername: function () {
+        var userIdContainer = MYCHAT.chat_container_elem.querySelector(".chat-header-container > .chat-user > h2");
+        userIdContainer.innerText = MYCHAT.username;
+    },
+
+    showRoom: function () {
+        var userIdContainer = MYCHAT.chat_container_elem.querySelector(".chat-header-container > .chat-name > h1");
+        userIdContainer.innerText = MYCHAT.room;
+    },
+
+    removeWelcomePopUp: function() {
+        MYCHAT.chat_container_elem.querySelector(":scope > .pop-up-container").remove();
+    },
+
+    setUpChat: function() {
+        MYCHAT.removeWelcomePopUp();
+        MYCHAT.showUsername();
+        MYCHAT.showRoom();
+        MYCHAT.setUpServer();
+        MYCHAT.setUpListeners();
+    },
+
     setUpServer: function () {
         MYCHAT.server = new SillyClient();
-        MYCHAT.server.connect( MYCHAT.server_url, MYCHAT.base_room + "1234");
+        MYCHAT.server.connect( MYCHAT.server_url, MYCHAT.room);
 
         MYCHAT.server.on_ready = MYCHAT.onReadyServer;
         MYCHAT.server.on_message = MYCHAT.onMessageServer;
@@ -29,16 +79,10 @@ var MYCHAT = {
 
     onReadyServer: function (my_id) {
         MYCHAT.user_id = my_id;
-        MYCHAT.showUserId(my_id);
     },
 
     onMessageServer: function( author_id, msg ){
         MYCHAT.showMessage(author_id, msg, "other");
-    },
-
-    showUserId: function (my_id) {
-        var userIdContainer = MYCHAT.chat_container_elem.querySelector(".chat-header-container > .chat-user");
-        userIdContainer.innerText = "User id: " + my_id;
     },
 
     getUserInput: function () {
@@ -88,7 +132,7 @@ var MYCHAT = {
             return;
         }
 
-        MYCHAT.showMessage(MYCHAT.user_id, text, "user");
+        MYCHAT.showMessage(MYCHAT.username, text, "user");
 
         MYCHAT.sendMessageToServer(text);
     },
