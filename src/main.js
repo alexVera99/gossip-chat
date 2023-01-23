@@ -3,6 +3,7 @@ var MYCHAT = {
     username: "",
     base_room: "GossipChat_",
     room: "",
+    DB: [],
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
     chat_container_elem: document.querySelector(".my-chat.main-container"),
@@ -89,6 +90,7 @@ var MYCHAT = {
     onMessageServer: function( author_id, msg ){
         msg = JSON.parse(msg);
         MYCHAT.showMessage(msg["username"], msg["content"], "other");
+        MYCHAT.updateChatHistory(msg);
     },
 
     sendMessageToServer: function (text) {
@@ -99,6 +101,7 @@ var MYCHAT = {
         };
 
         MYCHAT.server.sendMessage(msg);
+        MYCHAT.updateChatHistory(msg);
     },
 
     getUserInput: function () {
@@ -147,6 +150,11 @@ var MYCHAT = {
         MYCHAT.showMessage(MYCHAT.username, text, "user");
 
         MYCHAT.sendMessageToServer(text);
+    },
+
+    updateChatHistory: function (msg){
+        MYCHAT.DB.push(msg);
+        console.log(MYCHAT.DB);
     },
 
     isCtrlOrCmdPressed: function(event) {
