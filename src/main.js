@@ -2,6 +2,7 @@ class MessageType {
     static User = new MessageType("user");
     static Text = new MessageType("text");
     static History = new MessageType("history");
+    static Join = new MessageType("join");
 
     constructor(name) {
         this.name = name;
@@ -110,6 +111,7 @@ var MYCHAT = {
 
     onReadyServer: function (my_id) {
         MYCHAT.user_id = my_id;
+        MYCHAT.sendUserInfo();
     },
 
     onMessageServer: function( author_id, msg ){
@@ -122,8 +124,14 @@ var MYCHAT = {
             return;
         }
 
-        MYCHAT.showMessage(msg["username"], msg["content"], messageType);
-        MYCHAT.updateChatHistory(msg);
+        else if (messageType == MessageType.Join) {
+            MYCHAT.showJoinUser(msg["username"]);
+        }
+
+        else {
+            MYCHAT.showMessage(msg["username"], msg["content"], messageType);
+            MYCHAT.updateChatHistory(msg);
+        }
     },
 
     onUserConnected: function ( user_id ) {
@@ -224,6 +232,31 @@ var MYCHAT = {
         MYCHAT.showMessage(MYCHAT.username, text, MessageType.User);
 
         MYCHAT.sendMessageToServer(text);
+    },
+
+    sendUserInfo: function () {
+        var msg = {
+            type: "join",
+            username: MYCHAT.username,
+            content: MYCHAT.user_id,
+        }
+
+        MYCHAT.server.sendMessage(msg);
+    },
+
+    showJoinUser: function (username) {
+        let template = MYCHAT.chat_container_elem.querySelector("#templates .user-status");
+        let user_join_container = template.cloneNode(true);
+
+        user_join_container.children[0].innerText = `${username} has been connected`;
+
+        // Put the message container in the chat history container
+        var chat = MYCHAT.chat_container_elem.querySelector(".chat-history-container");
+
+        chat.appendChild(user_join_container);
+
+        // Scroll to bottom of the chat
+        MYCHAT.scrollToBottom(chat);
     },
 
     isCtrlOrCmdPressed: function(event) {
