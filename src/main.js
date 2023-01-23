@@ -1,3 +1,25 @@
+class MessageType {
+    static User = new MessageType("user");
+    static Text = new MessageType("text");
+    static History = new MessageType("history");
+
+    constructor(name) {
+        this.name = name;
+    }
+
+    create(name) {
+        let messageTypes = Object.values(MessageType);
+
+            for (let i = 0; i < messageTypes.length; i++) {
+                if (messageTypes[i].name == name) {
+                    return messageTypes[i];
+                }
+            }
+
+        return null;
+    }
+}
+
 var MYCHAT = {
     user_id: "",
     username: "",
@@ -92,14 +114,15 @@ var MYCHAT = {
 
     onMessageServer: function( author_id, msg ){
         msg = JSON.parse(msg);
+        let messageType = MessageType.prototype.create(msg["type"]);
 
-        if (msg["type"] == "history") {
+        if (messageType == MessageType.History) {
             let db = msg["content"];
             MYCHAT.loadChatHistory(db);
             return;
         }
 
-        MYCHAT.showMessage(msg["username"], msg["content"], "other");
+        MYCHAT.showMessage(msg["username"], msg["content"], messageType);
         MYCHAT.updateChatHistory(msg);
     },
 
@@ -109,7 +132,7 @@ var MYCHAT = {
 
     sendMessageToServer: function (text) {
         let msg = {
-            type: "text",
+            type: MessageType.Text.name,
             username: MYCHAT.username,
             content: text
         };
@@ -126,7 +149,7 @@ var MYCHAT = {
         MYCHAT.isChatHistorySharer = false;
 
         let msg = {
-            type: "history",
+            type: MessageType.History.name,
             content: MYCHAT.chatHistoryDB
         };
 
@@ -142,7 +165,8 @@ var MYCHAT = {
 
         for (let i = 0; i < MYCHAT.chatHistoryDB.length; i++) {
             let i_db_msg = MYCHAT.chatHistoryDB[i];
-            MYCHAT.showMessage(i_db_msg["username"], i_db_msg["content"], "other");
+            let msg_type = MessageType.prototype.create(i_db_msg["type"]);
+            MYCHAT.showMessage(i_db_msg["username"], i_db_msg["content"], msg_type);
         }
 
         MYCHAT.isChatHistoryLoad = true;
@@ -165,9 +189,8 @@ var MYCHAT = {
     },
 
     showMessage: function (username, text, messageType) {
-        var messageClass = messageType == "user" ?
-                           ".message-user-container" :
-                           ".message-other-users-container";
+        var messageClass = messageType == MessageType.User ?
+                           ".message-user-container" : ".message-other-users-container";
 
         var template = MYCHAT.chat_container_elem.querySelector("#templates " + messageClass);
         var message = template.cloneNode(true);
@@ -191,12 +214,15 @@ var MYCHAT = {
             return;
         }
 
-        MYCHAT.showMessage(MYCHAT.username, text, "user");
+        MYCHAT.showMessage(MYCHAT.username, text, MessageType.User);
 
         MYCHAT.sendMessageToServer(text);
     },
 
     updateChatHistory: function (msg){
+        if (!MYCHAT.isChatHistoryLoad) { // Condition for the first user in the chat
+            MYCHAT.isChatHistoryLoad = true;
+        }
         MYCHAT.chatHistoryDB.push(msg);
     },
 
