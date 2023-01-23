@@ -172,6 +172,13 @@ var MYCHAT = {
         MYCHAT.isChatHistoryLoad = true;
     },
 
+    updateChatHistory: function (msg){
+        if (!MYCHAT.isChatHistoryLoad) { // Condition for the first user in the chat
+            MYCHAT.isChatHistoryLoad = true;
+        }
+        MYCHAT.chatHistoryDB.push(msg);
+    },
+
     getUserInput: function () {
         // Get the message information from user input
         var user_input = MYCHAT.chat_container_elem.querySelector("#message-id");
@@ -217,13 +224,6 @@ var MYCHAT = {
         MYCHAT.showMessage(MYCHAT.username, text, MessageType.User);
 
         MYCHAT.sendMessageToServer(text);
-    },
-
-    updateChatHistory: function (msg){
-        if (!MYCHAT.isChatHistoryLoad) { // Condition for the first user in the chat
-            MYCHAT.isChatHistoryLoad = true;
-        }
-        MYCHAT.chatHistoryDB.push(msg);
     },
 
     isCtrlOrCmdPressed: function(event) {
