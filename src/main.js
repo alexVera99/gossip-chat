@@ -3,7 +3,9 @@ var MYCHAT = {
     username: "",
     base_room: "GossipChat_",
     room: "",
-    DB: [],
+    chatHistoryDB: [],
+    isChatHistorySharer: true, // Flag to know if the client needs to send Chat history
+    isChatHistoryLoad: false, // Flag to check if the history is already loaded
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
     chat_container_elem: document.querySelector(".my-chat.main-container"),
@@ -81,6 +83,7 @@ var MYCHAT = {
 
         MYCHAT.server.on_ready = MYCHAT.onReadyServer;
         MYCHAT.server.on_message = MYCHAT.onMessageServer;
+        MYCHAT.server.on_user_connected = MYCHAT.onUserConnected;
     },
 
     onReadyServer: function (my_id) {
@@ -89,8 +92,19 @@ var MYCHAT = {
 
     onMessageServer: function( author_id, msg ){
         msg = JSON.parse(msg);
+
+        if (msg["type"] == "history") {
+            let db = msg["content"];
+            MYCHAT.loadChatHistory(db);
+            return;
+        }
+
         MYCHAT.showMessage(msg["username"], msg["content"], "other");
         MYCHAT.updateChatHistory(msg);
+    },
+
+    onUserConnected: function ( user_id ) {
+        MYCHAT.sendChatHistory();
     },
 
     sendMessageToServer: function (text) {
@@ -102,6 +116,36 @@ var MYCHAT = {
 
         MYCHAT.server.sendMessage(msg);
         MYCHAT.updateChatHistory(msg);
+    },
+
+    sendChatHistory: function () {
+        if (!MYCHAT.isChatHistorySharer) {
+            return;
+        }
+
+        MYCHAT.isChatHistorySharer = false;
+
+        let msg = {
+            type: "history",
+            content: MYCHAT.chatHistoryDB
+        };
+
+        MYCHAT.server.sendMessage(msg);
+    },
+
+    loadChatHistory: function (db) {
+        if (MYCHAT.isChatHistoryLoad) {
+            return;
+        }
+
+        MYCHAT.chatHistoryDB = db;
+
+        for (let i = 0; i < MYCHAT.chatHistoryDB.length; i++) {
+            let i_db_msg = MYCHAT.chatHistoryDB[i];
+            MYCHAT.showMessage(i_db_msg["username"], i_db_msg["content"], "other");
+        }
+
+        MYCHAT.isChatHistoryLoad = true;
     },
 
     getUserInput: function () {
@@ -153,8 +197,7 @@ var MYCHAT = {
     },
 
     updateChatHistory: function (msg){
-        MYCHAT.DB.push(msg);
-        console.log(MYCHAT.DB);
+        MYCHAT.chatHistoryDB.push(msg);
     },
 
     isCtrlOrCmdPressed: function(event) {
