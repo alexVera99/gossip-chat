@@ -2,6 +2,7 @@ class MessageType {
     static User = new MessageType("user");
     static Text = new MessageType("text");
     static History = new MessageType("history");
+    static HistoryRequest = new MessageType("history-request");
     static Join = new MessageType("join");
 
     constructor(name) {
@@ -41,8 +42,6 @@ var MYCHAT = {
     base_room: "GossipChat_",
     room: "",
     chatHistoryDB: [],
-    isChatHistorySharer: true, // Flag to know if the client needs to send Chat history
-    isChatHistoryLoad: false, // Flag to check if the history is already loaded
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
     chat_container_elem: document.querySelector(".my-chat.main-container"),
@@ -120,12 +119,12 @@ var MYCHAT = {
 
         MYCHAT.server.on_ready = MYCHAT.onReadyServer;
         MYCHAT.server.on_message = MYCHAT.onMessageServer;
-        MYCHAT.server.on_user_connected = MYCHAT.onUserConnected;
     },
 
     onReadyServer: function (my_id) {
         MYCHAT.user_id = my_id;
         MYCHAT.sendUserInfo();
+        MYCHAT.server.getRoomInfo(MYCHAT.room, MYCHAT.requestChatHistory);
     },
 
     onMessageServer: function( author_id, msg ){
@@ -138,6 +137,10 @@ var MYCHAT = {
             return;
         }
 
+        else if (messageType == MessageType.HistoryRequest) {
+            MYCHAT.sendChatHistory(author_id);
+        }
+
         else if (messageType == MessageType.Join) {
             MYCHAT.showJoinUser(msg["username"]);
         }
@@ -146,10 +149,6 @@ var MYCHAT = {
             MYCHAT.showMessage(msg["username"], msg["content"], messageType);
             MYCHAT.updateChatHistory(msg);
         }
-    },
-
-    onUserConnected: function ( user_id ) {
-        MYCHAT.sendChatHistory();
     },
 
     sendMessageToServer: function (text) {
@@ -163,23 +162,44 @@ var MYCHAT = {
         MYCHAT.updateChatHistory(msg);
     },
 
-    sendChatHistory: function () {
-        if (!MYCHAT.isChatHistorySharer) {
+    requestChatHistory: function (room_info) {
+        // Get all users connected
+        let usrs = room_info["clients"];
+
+        // Check if nobody else in the chat
+        if (usrs.length == 1) {
             return;
         }
+        // Remove current user id
+        let i = usrs.indexOf(MYCHAT.user_id);
+        usrs.splice(i, 1);
 
-        MYCHAT.isChatHistorySharer = false;
+        // Obtain the user with the smallest ID
+        usrs.sort();
+        let oldestUser = usrs[0];
 
+        // Request the chat history to that user
+        let msg = {
+            type: MessageType.HistoryRequest.name,
+            username: MYCHAT.username,
+            content: ""
+        };
+
+        MYCHAT.server.sendMessage(msg, [oldestUser]);
+
+    },
+
+    sendChatHistory: function (user_id) {
         let msg = {
             type: MessageType.History.name,
             content: MYCHAT.chatHistoryDB
         };
 
-        MYCHAT.server.sendMessage(msg);
+        MYCHAT.server.sendMessage(msg, [user_id]);
     },
 
     loadChatHistory: function (db) {
-        if (MYCHAT.isChatHistoryLoad) {
+        if (!MYCHAT.chatHistoryDB.length == 0) {
             return;
         }
 
@@ -190,8 +210,6 @@ var MYCHAT = {
             let msg_type = MessageType.prototype.create(i_db_msg["type"]);
             MYCHAT.showMessage(i_db_msg["username"], i_db_msg["content"], msg_type);
         }
-
-        MYCHAT.isChatHistoryLoad = true;
     },
 
     updateChatHistory: function (msg){
