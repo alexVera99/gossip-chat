@@ -24,13 +24,18 @@ html, body {
 .my-chat .chat-header-container {
     grid-area: header;
     display: grid;
-    grid-template-columns: 5% auto minmax(min-content, 15%);
+    grid-template-columns: 2.9em auto minmax(min-content, 15%);
     padding: 0.5em;
     background-color: #587e88;
 }
 
+.my-chat .brand {
+    display: flex;
+}
+
 .my-chat .brand > img {
     width: 100%;
+    margin: auto;
 }
 
 .my-chat .chat-name {
@@ -79,16 +84,20 @@ html, body {
 .my-chat .message-user {
     background-color: #5d5888;
     width: fit-content;
+    max-width: 95%;
+    overflow-wrap: break-word;
     margin: 0.5em 1% 1em 30%;
-    padding: 1%;
+    padding: 0.8em;
     border-radius: 15px;
 }
 
 .my-chat .message-other-users {
     background-color: #588862;
     width: fit-content;
+    max-width: 95%;
+    overflow-wrap: break-word;
     margin: 0.5em 30% 1em 1%;
-    padding: 1%;
+    padding: 0.8em;
     border-radius: 15px;
 }
 
@@ -147,4 +156,55 @@ html, body {
   'wght' 300,
   'GRAD' 0,
   'opsz' 48
+}
+
+.my-chat .pop-up-container {
+    background-color: #202a2d;
+    position: absolute;
+    align-self: center;
+    justify-self: center;
+    width: 20ch;
+    height: 50%;
+    border-radius: 15px;
+    display: grid;
+    grid-template-areas: 'input'
+    'input'
+    'input'
+    'btn';
+}
+
+.my-chat .pop-up-container > .input-container {
+    text-align: center;
+    margin: auto;
+    grid-area: input;
+}
+
+.my-chat .pop-up-container > .input-container > p {
+    margin-bottom: 5%;
+}
+
+.my-chat .pop-up-container > .input-container > input#username-input {
+    margin-bottom: 10%;
+}
+
+.my-chat .pop-up-container > .input-container > input {
+    font-family: inherit;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container {
+    grid-area: btn;
+    text-align: center;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container > #pop-up-btn {
+    font-family: inherit;
+    width: 10ch;
+    height: 4ch;
+    background-color: white;
+    border-radius: 10px;
+    border: none;
+}
+
+.my-chat .pop-up-container > .pop-up-btn-container > #pop-up-btn:active {
+    background-color: #587e88;
 }
