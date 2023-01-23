@@ -21,6 +21,20 @@ class MessageType {
     }
 }
 
+SillyClient.prototype.getBaseURL = function()
+{
+    var url = this.url;
+    var protocol = location.protocol + "//";
+    if( url.indexOf("wss://") != -1)
+    {
+        protocol = "https://";
+        url = url.substr(6);
+    }
+    var index = url.indexOf("/");
+    var host = url.substr(0,index);
+    return protocol + host +  '/node/9000/';
+}
+
 var MYCHAT = {
     user_id: "",
     username: "",
