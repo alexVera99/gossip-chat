@@ -1,8 +1,33 @@
+class MessageType {
+    static User = new MessageType("user");
+    static Text = new MessageType("text");
+    static History = new MessageType("history");
+
+    constructor(name) {
+        this.name = name;
+    }
+
+    create(name) {
+        let messageTypes = Object.values(MessageType);
+
+            for (let i = 0; i < messageTypes.length; i++) {
+                if (messageTypes[i].name == name) {
+                    return messageTypes[i];
+                }
+            }
+
+        return null;
+    }
+}
+
 var MYCHAT = {
     user_id: "",
     username: "",
     base_room: "GossipChat_",
     room: "",
+    chatHistoryDB: [],
+    isChatHistorySharer: true, // Flag to know if the client needs to send Chat history
+    isChatHistoryLoad: false, // Flag to check if the history is already loaded
     server: undefined,
     server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
     chat_container_elem: document.querySelector(".my-chat.main-container"),
@@ -80,6 +105,7 @@ var MYCHAT = {
 
         MYCHAT.server.on_ready = MYCHAT.onReadyServer;
         MYCHAT.server.on_message = MYCHAT.onMessageServer;
+        MYCHAT.server.on_user_connected = MYCHAT.onUserConnected;
     },
 
     onReadyServer: function (my_id) {
@@ -88,17 +114,69 @@ var MYCHAT = {
 
     onMessageServer: function( author_id, msg ){
         msg = JSON.parse(msg);
-        MYCHAT.showMessage(msg["username"], msg["content"], "other");
+        let messageType = MessageType.prototype.create(msg["type"]);
+
+        if (messageType == MessageType.History) {
+            let db = msg["content"];
+            MYCHAT.loadChatHistory(db);
+            return;
+        }
+
+        MYCHAT.showMessage(msg["username"], msg["content"], messageType);
+        MYCHAT.updateChatHistory(msg);
+    },
+
+    onUserConnected: function ( user_id ) {
+        MYCHAT.sendChatHistory();
     },
 
     sendMessageToServer: function (text) {
         let msg = {
-            type: "text",
+            type: MessageType.Text.name,
             username: MYCHAT.username,
             content: text
         };
 
         MYCHAT.server.sendMessage(msg);
+        MYCHAT.updateChatHistory(msg);
+    },
+
+    sendChatHistory: function () {
+        if (!MYCHAT.isChatHistorySharer) {
+            return;
+        }
+
+        MYCHAT.isChatHistorySharer = false;
+
+        let msg = {
+            type: MessageType.History.name,
+            content: MYCHAT.chatHistoryDB
+        };
+
+        MYCHAT.server.sendMessage(msg);
+    },
+
+    loadChatHistory: function (db) {
+        if (MYCHAT.isChatHistoryLoad) {
+            return;
+        }
+
+        MYCHAT.chatHistoryDB = db;
+
+        for (let i = 0; i < MYCHAT.chatHistoryDB.length; i++) {
+            let i_db_msg = MYCHAT.chatHistoryDB[i];
+            let msg_type = MessageType.prototype.create(i_db_msg["type"]);
+            MYCHAT.showMessage(i_db_msg["username"], i_db_msg["content"], msg_type);
+        }
+
+        MYCHAT.isChatHistoryLoad = true;
+    },
+
+    updateChatHistory: function (msg){
+        if (!MYCHAT.isChatHistoryLoad) { // Condition for the first user in the chat
+            MYCHAT.isChatHistoryLoad = true;
+        }
+        MYCHAT.chatHistoryDB.push(msg);
     },
 
     getUserInput: function () {
@@ -118,9 +196,8 @@ var MYCHAT = {
     },
 
     showMessage: function (username, text, messageType) {
-        var messageClass = messageType == "user" ?
-                           ".message-user-container" :
-                           ".message-other-users-container";
+        var messageClass = messageType == MessageType.User ?
+                           ".message-user-container" : ".message-other-users-container";
 
         var template = MYCHAT.chat_container_elem.querySelector("#templates " + messageClass);
         var message = template.cloneNode(true);
@@ -144,7 +221,7 @@ var MYCHAT = {
             return;
         }
 
-        MYCHAT.showMessage(MYCHAT.username, text, "user");
+        MYCHAT.showMessage(MYCHAT.username, text, MessageType.User);
 
         MYCHAT.sendMessageToServer(text);
     },
