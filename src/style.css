@@ -111,6 +111,14 @@ html, body {
     font-size: 0.9em;
 }
 
+.my-chat .user-status {
+    text-align: center;
+    font-style: italic;
+    font-weight: 100;
+    font-size: 0.9em;
+    margin: 0.8em 0;
+}
+
 /* Chat input */
 .my-chat .chat-input-message-container {
     grid-area: message;

@@ -248,7 +248,7 @@ var MYCHAT = {
         let template = MYCHAT.chat_container_elem.querySelector("#templates .user-status");
         let user_join_container = template.cloneNode(true);
 
-        user_join_container.children[0].innerText = `User ${username} has been connected`;
+        user_join_container.children[0].innerText = `${username} has been connected`;
 
         // Put the message container in the chat history container
         var chat = MYCHAT.chat_container_elem.querySelector(".chat-history-container");
