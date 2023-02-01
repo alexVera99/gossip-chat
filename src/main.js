@@ -22,19 +22,6 @@ class MessageType {
     }
 }
 
-SillyClient.prototype.getBaseURL = function()
-{
-    var url = this.url;
-    var protocol = location.protocol + "//";
-    if( url.indexOf("wss://") != -1)
-    {
-        protocol = "https://";
-        url = url.substr(6);
-    }
-    var index = url.indexOf("/");
-    var host = url.substr(0,index);
-    return protocol + host +  '/node/9000/';
-}
 
 var MYCHAT = {
     user_id: "",
@@ -43,10 +30,11 @@ var MYCHAT = {
     room: "",
     chatHistoryDB: [],
     server: undefined,
-    server_url: "wss://ecv-etic.upf.edu/node/9000/ws",
+    server_url: undefined,
     chat_container_elem: document.querySelector(".my-chat.main-container"),
 
-    init: function() {
+    init: function(url) {
+        MYCHAT.server_url = url;
         // Show pop up
         let template = MYCHAT.chat_container_elem.querySelector("#templates .pop-up-container");
         let pop_up_container = template.cloneNode(true);
@@ -114,7 +102,7 @@ var MYCHAT = {
     },
 
     setUpServer: function () {
-        MYCHAT.server = new SillyClient();
+        MYCHAT.server = my_client;
         MYCHAT.server.connect( MYCHAT.server_url, MYCHAT.room);
 
         MYCHAT.server.on_ready = MYCHAT.onReadyServer;
@@ -309,4 +297,5 @@ var MYCHAT = {
     }
 }
 
-MYCHAT.init();
+var url = "localhost:8081";
+MYCHAT.init(url);
